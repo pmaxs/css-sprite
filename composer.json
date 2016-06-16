@@ -1,0 +1,19 @@
+{
+    "name": "pmaxs/css-sprite",
+    "type": "library",
+    "description": "CSS sprite generator",
+    "homepage": "https://github.com/pmaxs/css-sprite",
+    "keywords": ["css", "sprite", "generator"],
+    "minimum-stability": "dev",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.4.0",
+        "ext-imagick": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pmaxs\\CssSprite\\": "src/"
+        }
+    }
+}
+
