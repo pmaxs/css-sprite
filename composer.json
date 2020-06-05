@@ -3,7 +3,7 @@
     "type": "library",
     "description": "CSS sprite generator",
     "homepage": "https://github.com/pmaxs/css-sprite",
-    "keywords": ["css", "sprite", "generator"],
+    "keywords": ["css", "sprite", "generator", "php"],
     "minimum-stability": "dev",
     "license": "MIT",
     "require": {
