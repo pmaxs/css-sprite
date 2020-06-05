@@ -31,6 +31,9 @@ class Sprite
      */
     protected $options = [
         'exception_on_error' => 0,
+        'url' => '%url%',
+        'root_class' => 'sprite',
+        'class_prefix' => 'sprite',
         'algorithm' => 'area', // area, point
     ];
 
@@ -309,9 +312,9 @@ class Sprite
         unset($canvas, $imagick);
 
         // style
-        $this->style = ".sprite {background-image: url(%url%);}\n";
+        $this->style = ".{$this->options['root_class']} {background-image: url({$this->options['url']});}\n";
         foreach ($this->files as $index => $file) {
-            $this->style.= ".sprite.sprite-".$index." {width: ".$file['w']."px; height: ".$file['h']."px; background-position: ".(0 - $file['x'])."px ".(0 - $file['y'])."px;}\n";
+            $this->style.= ".{$this->options['root_class']}.{$this->options['class_prefix']}-".$index." {width: ".$file['w']."px; height: ".$file['h']."px; background-position: ".(0 - $file['x'])."px ".(0 - $file['y'])."px;}\n";
         }
     }
 }
