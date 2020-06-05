@@ -9,7 +9,13 @@ function getTime() {
 
 $t1 = getTime();
 
-$CssSprite = new \Pmaxs\CssSprite\Sprite();
+$CssSprite = new \Pmaxs\CssSprite\Sprite([
+    'exception_on_error' => 0,
+    'url' => '/stripe.png',
+    'root_class' => 'sprite',
+    'class_prefix' => 'sprite_item',
+    'algorithm' => 'area', // area, point
+]);
 $CssSprite->addFiles([
     __DIR__ . '/data1',
     __DIR__ . '/data2',

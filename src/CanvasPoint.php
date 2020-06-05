@@ -61,8 +61,8 @@ class CanvasPoint implements CanvasInterface
     public function makeArea($w, $h, $s = false)
     {
         if (empty($this->p)) {
-            $this->w = \max($this->w, $w);
-            $this->h = \max($this->h, $h);
+            $this->w = max($this->w, $w);
+            $this->h = max($this->h, $h);
             return $this->addArea(0, 0, $w, $h);
         } else {
             $x1 = $y1 = 0;
@@ -101,7 +101,9 @@ class CanvasPoint implements CanvasInterface
 
         $a = $this->makeArea($w, $h, 1);
 
-        if (!$s) $this->calculateSize();
+        if (!$s) {
+            $this->calculateSize();
+        }
 
         return $a;
     }
@@ -117,8 +119,8 @@ class CanvasPoint implements CanvasInterface
             $l = 0;
             for ($y = $this->h - 1; $y >= 0; $y--) {
                 if (!empty($this->p[$x][$y])) {
-                    $cw = \max($cw, $x + 1);
-                    $ch = \max($ch, $y + 1);
+                    $cw = max($cw, $x + 1);
+                    $ch = max($ch, $y + 1);
                     $l = 1;
                 } elseif ($l) {
                     break;
@@ -147,7 +149,7 @@ class CanvasPoint implements CanvasInterface
      * @param $y
      * @param $w
      * @param $h
-     * @return mixed area
+     * @return Area area
      */
     protected function addArea($x, $y, $w, $h)
     {
@@ -155,8 +157,13 @@ class CanvasPoint implements CanvasInterface
         $y2 = $y + $h;
 
         for ($px = $x; $px < $x2; $px++) {
-            if (!isset($this->p[$px])) $this->p[$px] = [];
-            for ($py = $y; $py < $y2; $py++) $this->p[$px][$py] = 1;
+            if (!isset($this->p[$px])) {
+                $this->p[$px] = [];
+            }
+
+            for ($py = $y; $py < $y2; $py++) {
+                $this->p[$px][$py] = 1;
+            }
         }
 
         return new Area($x, $y, $w, $h);
