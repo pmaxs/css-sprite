@@ -324,8 +324,7 @@ class Sprite
         unset($canvas, $imagick);
 
         // style
-        $this->style = ".{$this->options['root_class']} {background-image: url({$this->options['url']});}\n";
-
+        $this->style = ".{$this->options['root_class']} { display: inline-block; background: url({$this->options['url']}) no-repeat; overflow: hidden; }\n";
         foreach ($this->files as $index => $file) {
             if (!empty($file['errors'])) {
                 continue;
