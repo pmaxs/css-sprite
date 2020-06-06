@@ -8,9 +8,9 @@ interface CanvasInterface
 {
     /**
      * Finds free place on canvas and places area there
-     * @param $w width
-     * @param $h height
-     * @param bool $s recalculate width and height
+     * @param int $w
+     * @param int $h
+     * @param bool $s
      * @return Area
      */
     public function makeArea($w, $h, $s = false);

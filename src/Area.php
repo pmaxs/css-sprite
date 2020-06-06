@@ -8,42 +8,42 @@ class Area implements \ArrayAccess
 {
     /**
      * 1-st point x
-     * @var
+     * @var int
      */
     protected $x;
 
     /**
      * 1-st point y
-     * @var
+     * @var int
      */
     protected $y;
 
     /**
      * 2-nd point x
-     * @var
+     * @var int
      */
     protected $x2;
 
     /**
      * 2-nd point y
-     * @var
+     * @var int
      */
     protected $y2;
 
     /**
      * Width
-     * @var
+     * @var int
      */
     protected $w;
 
     /**
      * Height
-     * @var
+     * @var int
      */
     protected $h;
 
     /**
-     * Constructor
+     * Area constructor.
      * @param $x
      * @param $y
      * @param $w
@@ -101,7 +101,7 @@ class Area implements \ArrayAccess
 
     /**
      * Checks if area contains another area
-     * @param $a
+     * @param Area $a
      * @return bool
      */
     public function containArea($a)

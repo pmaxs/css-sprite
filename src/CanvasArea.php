@@ -25,7 +25,7 @@ class CanvasArea implements CanvasInterface
     protected $a = [];
 
     /**
-     * Constructor
+     * CanvasArea constructor.
      * @param int $w
      * @param int $h
      */
@@ -63,17 +63,23 @@ class CanvasArea implements CanvasInterface
         $a = false;
 
         if (empty($this->a)) {
-            $this->w = \max($this->w, $w);
-            $this->h = \max($this->h, $h);
+            $this->w = max($this->w, $w);
+            $this->h = max($this->h, $h);
             return $this->addArea(new Area(0, 0, $w, $h));
         } else {
-            foreach (\array_reverse($this->a) as $aa) {
-                if (($a = $this->addArea(new Area($aa->x2 + 1, $aa->y, $w, $h)))) return $a;
-                if (($a = $this->addArea(new Area($aa->x, $aa->y2 + 1, $w, $h)))) return $a;
+            foreach (array_reverse($this->a) as $aa) {
+                if (($a = $this->addArea(new Area($aa->x2 + 1, $aa->y, $w, $h)))) {
+                    return $a;
+                }
+                if (($a = $this->addArea(new Area($aa->x, $aa->y2 + 1, $w, $h)))) {
+                    return $a;
+                }
             }
         }
 
-        if (!empty($a)) return $a;
+        if (!empty($a)) {
+            return $a;
+        }
 
         // extend canvas
         $this->w += 4;
@@ -81,7 +87,9 @@ class CanvasArea implements CanvasInterface
 
         $a = $this->makeArea($w, $h, 1);
 
-        if (!$s) $this->calculateSize();
+        if (!$s) {
+            $this->calculateSize();
+        }
 
         return $a;
     }
@@ -94,8 +102,8 @@ class CanvasArea implements CanvasInterface
         $cw = $ch = 0;
 
         foreach ($this->a as $aa) {
-            $cw = \max($cw, $aa->x2 + 1);
-            $ch = \max($ch, $aa->y2 + 1);
+            $cw = max($cw, $aa->x2 + 1);
+            $ch = max($ch, $aa->y2 + 1);
         }
 
         $this->w = $cw;
@@ -119,14 +127,19 @@ class CanvasArea implements CanvasInterface
      */
     protected function isEmpty($a)
     {
-        foreach ($this->a as $aa) if ($aa->containArea($a)) return false;
+        foreach ($this->a as $aa) {
+            if ($aa->containArea($a)) {
+                return false;
+            }
+        }
+
         return true;
     }
 
     /**
      * Adds area on canvas
      * @param Area $a
-     * @returns Area
+     * @return Area|bool
      */
     protected function addArea($a)
     {

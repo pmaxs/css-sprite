@@ -6,29 +6,19 @@ namespace Pmaxs\CssSprite;
  */
 class Sprite
 {
-    /**
-     *
-     */
+    /** @var array */
     protected $files = [];
 
-    /**
-     *
-     */
+    /** @var string */
     protected $sprite;
 
-    /**
-     *
-     */
+    /** @var string */
     protected $style;
 
-    /**
-     *
-     */
+    /** @var array */
     protected $errors = [];
 
-    /**
-     *
-     */
+    /** @var array */
     protected $options = [
         'exception_on_error' => 0,
         'url' => '%url%',
@@ -38,17 +28,17 @@ class Sprite
     ];
 
     /**
-     * Constructor
-     * @param $options
+     * Sprite constructor.
+     * @param array $options
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         $this->setOptions($options);
     }
 
     /**
-     * Return sprite
-     * @return mixed
+     * Returns sprite
+     * @return string
      */
     public function getSprite()
     {
@@ -56,8 +46,8 @@ class Sprite
     }
 
     /**
-     * Return style
-     * @return mixed
+     * Returns style
+     * @return string
      */
     public function getStyle()
     {
@@ -65,8 +55,8 @@ class Sprite
     }
 
     /**
-     * Return errors
-     * @return mixed
+     * Returns errors
+     * @return array
      */
     public function getErrors()
     {
@@ -74,8 +64,8 @@ class Sprite
     }
 
     /**
-     * Return errors
-     * @return mixed
+     * Checks if has errors
+     * @return bool
      */
     public function hasErrors()
     {
@@ -83,24 +73,27 @@ class Sprite
     }
 
     /**
-     * Add error
+     * Adds error
      * @param $error
-     * @param $index
-     * @return mixed
+     * @param null $index
      * @throws \Exception
      */
     protected function addError($error, $index = null)
     {
-        if ($index) $error = $index . '(' . $this->files[$index]['path'].') - '.$error;
+        if ($index) {
+            $error = $index . '(' . $this->files[$index]['path'].') - '.$error;
+            $this->files[$index]['errors'][] = $error;
+        }
 
-        if (!empty($this->options['exception_on_error']) || empty($index)) throw new \Exception($error);
-
-        if ($index) $this->files[$index]['errors'][] = $error;
         $this->errors[] = $error;
+
+        if (!empty($this->options['exception_on_error']) || empty($index)) {
+            throw new \Exception($error);
+        }
     }
 
     /**
-     * Return options
+     * Returns options
      * @return array
      */
     public function getOptions()
@@ -109,17 +102,17 @@ class Sprite
     }
 
     /**
-     * Set options
+     * Sets options
      * @param array $options
      */
-    public function setOptions(array $options = array())
+    public function setOptions(array $options = [])
     {
-        $this->options = \array_replace($this->options, $options);
+        $this->options = array_replace($this->options, $options);
     }
 
     /**
-     * Return files
-     * @return mixed
+     * Returns files
+     * @return array
      */
     public function getFiles()
     {
@@ -127,21 +120,24 @@ class Sprite
     }
 
     /**
-     * Sets files for sprite
+     * Adds files to sprite
      * @param $files
+     * @throws \Exception
      */
     public function addFiles($files)
     {
-        if (!\is_array($files)) $files = [$files];
+        if (!is_array($files)) {
+            $files = [$files];
+        }
 
         foreach ($files as $index => $path) {
-            if (\is_dir($path)) {
+            if (is_dir($path)) {
                 $this->addFiles($this->getFilesFromDirectory($path));
                 continue;
             }
 
-            if (\is_numeric($index)) {
-                $index = \pathinfo($path, \PATHINFO_FILENAME);
+            if (is_numeric($index)) {
+                $index = pathinfo($path, \PATHINFO_FILENAME);
             }
 
             $index = preg_replace('~\\s+~', '_', $index);
@@ -149,7 +145,9 @@ class Sprite
             if (!empty($this->files[$index])) {
                 $index1 = $index;
                 $i = 1;
-                do $index .= $index1 . '_' . $i++; while (!empty($this->files[$index]));
+                do {
+                    $index .= $index1 . '_' . $i++;
+                } while (!empty($this->files[$index]));
             }
 
             $this->files[$index] = [
@@ -159,7 +157,7 @@ class Sprite
                 'h' => 0,
             ];
 
-            if (!\is_file($path)) {
+            if (!is_file($path)) {
                 $this->addError('File not exist', $index);
                 continue;
             }
@@ -167,8 +165,7 @@ class Sprite
     }
 
     /**
-     * Clears file list
-     * @param $files
+     * Removes all files from sprite
      */
     public function clearFiles()
     {
@@ -176,13 +173,14 @@ class Sprite
     }
 
     /**
-     * Get files from directory
+     * Gets files from directory
      * @param $directory
-     * @return mixed
+     * @return array
+     * @throws \Exception
      */
     protected function getFilesFromDirectory($directory)
     {
-        if (!\is_dir($directory)) {
+        if (!is_dir($directory)) {
             $this->addError('Directory "'.$directory.'" not exist');
             return [];
         }
@@ -192,7 +190,10 @@ class Sprite
         $iterator = new \DirectoryIterator($directory);
 
         foreach ($iterator as $info) {
-            if ($info->isDot()) continue;
+            if ($info->isDot()) {
+                continue;
+            }
+
             $files[] = $info->getPathname();
         }
 
@@ -201,13 +202,18 @@ class Sprite
 
     /**
      * Creates sprite and styles
-     * @param $files
-     * @throws \Exception
+     * @param null $files
+     * @throws \ImagickException
      */
     public function process($files = null)
     {
-        if (isset($files)) $this->addFiles($files);
-        if (empty($this->files)) throw new \Exception('No files');
+        if (isset($files)) {
+            $this->addFiles($files);
+        }
+
+        if (empty($this->files)) {
+            throw new \Exception('No files');
+        }
 
         $widths = [];
         $widthss = 0;
@@ -218,7 +224,9 @@ class Sprite
 
         foreach ($this->files as $index => $file) {
             try {
-                if (!empty($file['errors'])) continue;
+                if (!empty($file['errors'])) {
+                    continue;
+                }
 
                 $imagick1 = new \Imagick();
                 $imagick1->readImage($file['path']);
@@ -253,15 +261,17 @@ class Sprite
             $this->addError('No valid files');
         }
 
-        $canvasWidth = \ceil(\sqrt($squaress) * $widthss / $heightss);
-        $canvasHeight = \ceil(\sqrt($squaress) * $heightss / $widthss);
+        $canvasWidth = ceil(sqrt($squaress) * $widthss / $heightss);
+        $canvasHeight = ceil(sqrt($squaress) * $heightss / $widthss);
 
         $canvasClass = __NAMESPACE__ . '\\Canvas' . ucfirst($this->options['algorithm']);
-        if (!\class_exists($canvasClass)) throw new \Exception('Unknown algorithm "' . $this->options['algorithm'] . '"');
+        if (!class_exists($canvasClass)) {
+            throw new \Exception('Unknown algorithm "' . $this->options['algorithm'] . '"');
+        }
 
         $canvas = new $canvasClass($canvasWidth, $canvasHeight);
 
-        \arsort($squares);
+        arsort($squares);
 
         foreach ($squares as $index => $square) {
             $file = $this->files[$index];
@@ -280,7 +290,9 @@ class Sprite
 
         foreach ($this->files as $index => $file) {
             try {
-                if (!empty($file['errors'])) continue;
+                if (!empty($file['errors'])) {
+                    continue;
+                }
 
                 $imagick1 = new \Imagick();
                 $imagick1->readImage($file['path']);
@@ -314,7 +326,16 @@ class Sprite
         // style
         $this->style = ".{$this->options['root_class']} { display: inline-block; background: url({$this->options['url']}) no-repeat; overflow: hidden; }\n";
         foreach ($this->files as $index => $file) {
-            $this->style.= ".{$this->options['root_class']}.{$this->options['class_prefix']}-".$index." {width: ".$file['w']."px; height: ".$file['h']."px; background-position: ".(0 - $file['x'])."px ".(0 - $file['y'])."px;}\n";
+            if (!empty($file['errors'])) {
+                continue;
+            }
+
+            $this->style.=
+                ".{$this->options['root_class']}.{$this->options['class_prefix']}-{$index} { "
+                . "width: {$file['w']}px; "
+                . "height: {$file['h']}px; "
+                . "background-position: ".(0 - $file['x'])."px ".(0 - $file['y'])."px; "
+                . "}\n";
         }
     }
 }
