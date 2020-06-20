@@ -24,6 +24,9 @@ class Sprite
         'url' => '%url%',
         'root_class' => 'sprite',
         'class_prefix' => 'sprite',
+        'quality' => 100,
+        'compression' => \Imagick::COMPRESSION_UNDEFINED,
+        'format' => 'png',
         'force_width' => 0,
         'force_height' => 0,
         'algorithm' => 'area', // area, point
@@ -344,9 +347,12 @@ class Sprite
             }
         }
 
-        $imagick->setImageFormat('png');
-        $imagick->setImageCompression(\Imagick::COMPRESSION_UNDEFINED);
-        $imagick->setImageCompressionQuality(0);
+        $quality = $this->options['quality'];
+        if($quality === 100) $quality = 0;
+
+        $imagick->setImageFormat($this->options['format']);
+        $imagick->setImageCompression($this->options['compression']);
+        $imagick->setImageCompressionQuality($quality);
         $imagick->stripImage();
 
         $this->sprite = $imagick->getImageBlob();
