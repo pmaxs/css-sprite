@@ -24,6 +24,8 @@ class Sprite
         'url' => '%url%',
         'root_class' => 'sprite',
         'class_prefix' => 'sprite',
+        'force_width' => 0,
+        'force_height' => 0,
         'algorithm' => 'area', // area, point
     ];
 
@@ -201,6 +203,33 @@ class Sprite
     }
 
     /**
+     * @param \Imagick $image
+     * @return \Imagick
+     * @throws \ImagickException
+     */
+    private function configureImage(\Imagick $image) {
+        $width = $image->getImageWidth();
+        if($this->options['force_width'] > 0) {
+            $width = $this->options['force_width'];
+        }
+
+        $height = $image->getImageHeight();
+        if($this->options['force_height'] > 0) {
+            $height = $this->options['force_height'];
+        }
+
+        if($this->options['force_height'] && !$this->options['force_width']) {
+            $image->scaleImage(0, $this->options['force_height']); // forces aspect ratio
+        } else if($this->options['force_width'] && !$this->options['force_height']) {
+            $image->scaleImage($this->options['force_width'], 0); // forces aspect ratio
+        } else if($this->options['force_height'] && $this->options['force_width']) {
+            $image->scaleImage($width, $height);                       // brand new dimensions
+        }
+
+        return $image;
+    }
+
+    /**
      * Creates sprite and styles
      * @param null $files
      * @throws \ImagickException
@@ -235,8 +264,10 @@ class Sprite
                     continue;
                 }
 
+                $imagick1 = $this->configureImage($imagick1);
                 $width = $imagick1->getImageWidth();
                 $height = $imagick1->getImageHeight();
+
                 $square = $width * $height;
 
                 $this->files[$index]['w'] = $width;
@@ -300,6 +331,8 @@ class Sprite
                     $this->addError('Imagick is not valid', $index);
                     continue;
                 }
+
+                $imagick1 = $this->configureImage($imagick1);
 
                 $imagick->compositeImage($imagick1, $imagick1->getImageCompose(), $file['x'], $file['y']);
 
